@@ -1,1 +1,1 @@
-spring boot, JPA
+spring boot, JPA, mariaDB
