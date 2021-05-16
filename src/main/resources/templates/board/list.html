@@ -22,6 +22,14 @@
         <h2>게시판</h2>
         <div>총 건수 : <span th:text="${boards.totalElements}"></span></div>
 
+        <form class="form-inline d-flex justify-content-end" method="GET" th:action=@{/board/list}>
+            <div class="form-group mx-sm-3 mb-2">
+                <label for="searchText" class="sr-only">검색</label>
+                <input type="text" class="form-control" id="searchText" name="searchText" th:value="${param.searchText}" >
+            </div>
+            <button type="submit" class="btn btn-light mb-2">검색</button>
+        </form>
+
         <table class="table table-striped">
             <thead>
                 <tr>
@@ -32,31 +40,41 @@
             </thead>
             <tbody>
                 <tr th:each="board,vs : ${boards}">
-                    <th scope="row" th:text="${boards.totalElements - (boards.pageable.pageNumber)*boards.size - vs.index}">1</th>
+                    <th scope="row"
+                        th:text="${boards.totalElements - (boards.pageable.pageNumber)*boards.size - vs.index}">1</th>
                     <td><a th:text="${board.title}" href="" th:href="@{/board/form(id=${board.id})}">test</a></td>
                     <td>홍길동</td>
                 </tr>
             </tbody>
         </table>
-        <nav aria-label="Page navigation example" 
+        <nav aria-label="Page navigation example"
             th:with="start=${(boards.number/maxPage)*maxPage + 1},
             end=(${(boards.totalPages == 0) ? 1 : (start + (maxPage - 1) < boards.totalPages ? start + (maxPage - 1) : boards.totalPages)})">
-            
+
             <ul class="pagination justify-content-center">
-                <li th:if="${start > 1}" class="page-item" th:classappend="${1 == boards.pageable.pageNumber + 1} ? 'disabled'">
-                    <a class="page-link" href="#" th:href="@{/board/list(page=0)}" th:text="'first'"></a></li>
+                <li th:if="${start > 1}" class="page-item"
+                    th:classappend="${1 == boards.pageable.pageNumber + 1} ? 'disabled'">
+                    <a class="page-link" href="#" th:href="@{/board/list(page=0, searchText=${param.searchText})}" th:text="'first'"></a>
                 </li>
-                <li th:if="${start > 1}" class="page-item" th:classappend="${1 == boards.pageable.pageNumber + 1} ? 'disabled'">
-                    <a class="page-link" href="#" th:href="@{/board/list(page=${(start - maxPage) + maxPage-2})}" tabindex="-1" aria-disabled="true">Previous</a>
                 </li>
-                <li class="page-item" th:classappend="${i == boards.pageable.pageNumber + 1} ? 'disabled'" th:each="i : ${#numbers.sequence(start, end)}">
-                    <a class="page-link" href="#" th:href="@{/board/list(page=${i-1})}" th:text="${i}">1</a>
+                <li th:if="${start > 1}" class="page-item"
+                    th:classappend="${1 == boards.pageable.pageNumber + 1} ? 'disabled'">
+                    <a class="page-link" href="#" th:href="@{/board/list(page=${(start - maxPage) + maxPage-2}, searchText=${param.searchText})}"
+                        tabindex="-1" aria-disabled="true">Previous</a>
                 </li>
-                <li th:if="${end < boards.totalPages}" class="page-item" th:classappend="${boards.totalPages == boards.pageable.pageNumber + 1} ? 'disabled'">
-                    <a class="page-link" href="#" th:href="@{/board/list(page=${(start + maxPage) - 1})}">Next</a>
+                <li class="page-item" th:classappend="${i == boards.pageable.pageNumber + 1} ? 'disabled'"
+                    th:each="i : ${#numbers.sequence(start, end)}">
+                    <a class="page-link" href="#" th:href="@{/board/list(page=${i-1}, searchText=${param.searchText})}" th:text="${i}">1</a>
                 </li>
-                <li th:if="${end < boards.totalPages}" class="page-item" th:classappend="${boards.totalPages == boards.pageable.pageNumber + 1} ? 'disabled'">
-                    <a class="page-link" href="#" th:href="@{/board/list(page=${boards.totalPages-1})}" th:text="'end'"></a></li>
+                <li th:if="${end < boards.totalPages}" class="page-item"
+                    th:classappend="${boards.totalPages == boards.pageable.pageNumber + 1} ? 'disabled'">
+                    <a class="page-link" href="#" th:href="@{/board/list(page=${(start + maxPage) - 1}, searchText=${param.searchText})}">Next</a>
+                </li>
+                <li th:if="${end < boards.totalPages}" class="page-item"
+                    th:classappend="${boards.totalPages == boards.pageable.pageNumber + 1} ? 'disabled'">
+                    <a class="page-link" href="#" th:href="@{/board/list(page=${boards.totalPages-1}, searchText=${param.searchText})}"
+                        th:text="'end'"></a>
+                </li>
                 </li>
             </ul>
         </nav>

@@ -27,9 +27,11 @@ public class BoardController {
     private BoardValidator boardValidator;
 
     @GetMapping("/list")
-    public String list(Model model, @PageableDefault(size = 10) Pageable pageable) {
+    public String list(Model model, @PageableDefault(size = 10) Pageable pageable, @RequestParam(required = false, defaultValue = "") String searchText) {
         Page<Board> boards = boardRepository.findAll(pageable);
-
+        if(!searchText.equals(null)) {
+            boards = boardRepository.findByTitleContainingOrContentContaining(searchText,searchText,pageable);
+        }
         model.addAttribute("maxPage", 10);
         model.addAttribute("boards", boards);
         return "board/list";
